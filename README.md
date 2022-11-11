@@ -45,6 +45,7 @@ Updated by Dorofeev Andrei, added gpu low level discovery
 ## Macros used
 
 {$TEMP_CRIT} - Disaster temperature trigger level
+
 {$TEMP_WARN} - Warn tempreture trigger level
 
 ## Template links
