@@ -39,6 +39,7 @@ UserParameter=gpu.gpu_bus_id[*],nvidia-smi --query-gpu=gpu_bus_id --format=csv,n
 
 ## Author
 Based on https://github.com/zabbix/community-templates/tree/main/Server_Hardware/Other/template_nvidia-smi_integration/5.0 writed by Richard Kavanagh
+
 Updated by Dorofeev Andrei, added gpu low level discovery
 
 ## Macros used
