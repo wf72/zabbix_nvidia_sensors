@@ -1,0 +1,231 @@
+zabbix_export:
+  version: '6.0'
+  date: '2022-11-11T09:57:08Z'
+  groups:
+    -
+      uuid: 7df96b18c230490a9a0a9e2307226338
+      name: Templates
+    -
+      uuid: 737a3413107b407aa81d6ba319dac558
+      name: Templates_Custom
+  templates:
+    -
+      uuid: b2a0d9ae59a1478f9ba7df8796b807b1
+      template: 'NVidia Sensors'
+      name: 'NVidia Sensors'
+      description: |
+        ## Overview
+        
+        This template integrates NVidia SMI for multiple graphics card with Zabbix.
+        
+        
+        The template adds monitoring of:
+        
+        * GPU Utilisation
+        * GPU Memory Utilisation
+        * GPU Power Consumption
+        * GPU Memory (Used, Free, Total)
+        * GPU Temperature
+        * GPU Memory Temperature
+        * GPU Fan Speed
+        
+        
+        The following agent parameters can be used to add the metrics into Zabbix:
+        
+        UserParameter=gpu.discovery,t=1;echo -n "[";for i in `nvidia-smi --query-gpu=uuid --format=csv,nounits,noheader`;do if [ $t -eq 0 ]; then echo ",";else t=0;fi; echo -n "{\"{#UUID}\":\"$i\", \"{#INDEX}\":\"`nvidia-smi --query-gpu=index --format=csv,nounits,noheader --id=$i`\", \"{#NAME}\":\"`nvidia-smi --query-gpu=name --format=csv,nounits,noheader --id=$i`\"}";done; echo "]"
+        UserParameter=gpu.fanspeed[*],nvidia-smi --query-gpu=fan.speed --format=csv,noheader,nounits -i $1 | tr -d "\n"
+        UserParameter=gpu.power[*],nvidia-smi --query-gpu=power.draw --format=csv,noheader,nounits -i $1 | tr -d "\n"
+        UserParameter=gpu.temp.gpu[*],nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader,nounits -i $1 | tr -d "\n"
+        UserParameter=gpu.temp.memory[*],nvidia-smi --query-gpu=temperature.memory --format=csv,noheader,nounits -i $1 | tr -d "\n"
+        UserParameter=gpu.utilization.gpu[*],nvidia-smi --query-gpu=utilization.gpu --format=csv,noheader,nounits -i $1 | tr -d "\n"
+        UserParameter=gpu.utilization.memory[*],nvidia-smi --query-gpu=utilization.memory --format=csv,noheader,nounits -i $1 | tr -d "\n"
+        UserParameter=gpu.memfree[*],nvidia-smi --query-gpu=memory.free --format=csv,noheader,nounits -i $1 | tr -d "\n"
+        UserParameter=gpu.memused[*],nvidia-smi --query-gpu=memory.used --format=csv,noheader,nounits -i $1 | tr -d "\n"
+        UserParameter=gpu.memtotal[*],nvidia-smi --query-gpu=memory.total --format=csv,noheader,nounits -i $1 | tr -d "\n"
+        UserParameter=gpu.persistence_mode[*],nvidia-smi --query-gpu=persistence_mode --format=csv,noheader,nounits -i $1 | tr -d "\n"
+        UserParameter=gpu.display_active[*],nvidia-smi --query-gpu=display_active --format=csv,noheader,nounits -i $1 | tr -d "\n"
+        UserParameter=gpu.driver_version[*],nvidia-smi --query-gpu=driver_version --format=csv,noheader,nounits -i $1 | tr -d "\n"
+        UserParameter=gpu.gpu_bus_id[*],nvidia-smi --query-gpu=gpu_bus_id --format=csv,noheader,nounits -i $1 | tr -d "\n"
+        
+        ## Author
+        
+        Richard Kavanagh
+        
+        ## Updated by Dorofeev Andrei, added gpu low level discovery
+      groups:
+        -
+          name: Templates
+        -
+          name: Templates_Custom
+      discovery_rules:
+        -
+          uuid: 0aa3f0c166cf458e8617ce3db0f87aa7
+          name: 'Nvidia GPU Disccovery'
+          key: gpu.discovery
+          delay: 12h
+          item_prototypes:
+            -
+              uuid: 3d4e95daedf44904b359a874a0ed8a92
+              name: '{#NAME} {#INDEX} Display Active'
+              key: 'gpu.display_active[{#UUID}]'
+              delay: 1h
+              history: 7d
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: GPU
+                  value: nvidia
+            -
+              uuid: d621c237848b4a82b6addfc32140e3bc
+              name: '{#NAME} {#INDEX} Driver Version'
+              key: 'gpu.driver_version[{#UUID}]'
+              delay: 1h
+              history: 7d
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: GPU
+                  value: nvidia
+            -
+              uuid: b0b30ec4c5b748fb890f5157f73f8a43
+              name: '{#NAME} {#INDEX} Fan Speed'
+              key: 'gpu.fanspeed[{#UUID}]'
+              history: 7d
+              units: '%'
+              tags:
+                -
+                  tag: GPU
+                  value: nvidia
+            -
+              uuid: 428d461c56e94b57a9fcab11805e9641
+              name: '{#NAME} {#INDEX} Bus Id'
+              key: 'gpu.gpu_bus_id[{#UUID}]'
+              delay: 1h
+              history: 7d
+              trends: '0'
+              value_type: TEXT
+              tags:
+                -
+                  tag: GPU
+                  value: nvidia
+            -
+              uuid: 6a0ca38d694a4f1583a18ce00895ce28
+              name: '{#NAME} {#INDEX} Free Memory'
+              key: 'gpu.memfree[{#UUID}]'
+              history: 7d
+              units: B
+              tags:
+                -
+                  tag: GPU
+                  value: nvidia
+            -
+              uuid: 487eed57c8ef46648ffd523cb05d900e
+              name: '{#NAME} {#INDEX} Total Memory'
+              key: 'gpu.memtotal[{#UUID}]'
+              delay: 1h
+              history: 7d
+              units: B
+              tags:
+                -
+                  tag: GPU
+                  value: nvidia
+            -
+              uuid: 1832c795a6cd4ed095ec7632f2ecfc99
+              name: '{#NAME} {#INDEX} Used Memory'
+              key: 'gpu.memused[{#UUID}]'
+              history: 7d
+              units: B
+              tags:
+                -
+                  tag: GPU
+                  value: nvidia
+            -
+              uuid: c341ffdb5bfb4ef4a4e18a08092d7f1e
+              name: '{#NAME} {#INDEX} Power'
+              key: 'gpu.power[{#UUID}]'
+              history: 7d
+              value_type: FLOAT
+              units: W
+              preprocessing:
+                -
+                  type: JAVASCRIPT
+                  parameters:
+                    - 'return (Number(value));'
+              tags:
+                -
+                  tag: GPU
+                  value: nvidia
+            -
+              uuid: 33dbd08c296241c69af841fa01c367b3
+              name: '{#NAME} {#INDEX} GPU Temperature'
+              key: 'gpu.temp.gpu[{#UUID}]'
+              history: 7d
+              units: С
+              tags:
+                -
+                  tag: GPU
+                  value: nvidia
+              trigger_prototypes:
+                -
+                  uuid: 9d69f48d874642e38a2d6a31ed674862
+                  expression: 'last(/NVidia Sensors/gpu.temp.gpu[{#UUID}])>{$TEMP_CRIT}'
+                  name: '{#NAME} {#INDEX} Temperature over {$TEMP_CRIT} {HOSTNAME}'
+                  priority: HIGH
+                  tags:
+                    -
+                      tag: nvidia
+                -
+                  uuid: 32f51c83dab743c3919bf0548358dac9
+                  expression: 'last(/NVidia Sensors/gpu.temp.gpu[{#UUID}])>{$TEMP_WARN}'
+                  name: '{#NAME} {#INDEX} Temperature over {$TEMP_WARN} {HOSTNAME}'
+                  priority: WARNING
+                  dependencies:
+                    -
+                      name: '{#NAME} {#INDEX} Temperature over {$TEMP_CRIT} {HOSTNAME}'
+                      expression: 'last(/NVidia Sensors/gpu.temp.gpu[{#UUID}])>{$TEMP_CRIT}'
+                  tags:
+                    -
+                      tag: nvidia
+            -
+              uuid: 1dc28e72ccfb45ad9d9bc298c26704d1
+              name: '{#NAME} {#INDEX} Memory Temperature'
+              key: 'gpu.temp.memory[{#UUID}]'
+              history: 7d
+              units: С
+              tags:
+                -
+                  tag: GPU
+                  value: nvidia
+            -
+              uuid: 2bd0d11437694cb297be7cdb37db5186
+              name: '{#NAME} {#INDEX} GPU Utilisation'
+              key: 'gpu.utilization.gpu[{#UUID}]'
+              history: 7d
+              units: '%'
+              tags:
+                -
+                  tag: GPU
+                  value: nvidia
+            -
+              uuid: 351db9f9e0bf4bc5ae776a25317bb717
+              name: '{#NAME} {#INDEX} Memory Utilisation'
+              key: 'gpu.utilization.memory[{#UUID}]'
+              history: 7d
+              units: '%'
+              tags:
+                -
+                  tag: GPU
+                  value: nvidia
+      tags:
+        -
+          tag: GPU
+          value: nvidia
+      macros:
+        -
+          macro: '{$TEMP_CRIT}'
+          value: '94'
+        -
+          macro: '{$TEMP_WARN}'
+          value: '91'
