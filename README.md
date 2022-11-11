@@ -77,5 +77,6 @@ There are no discovery rules in this template.
 ## Triggers
 
 {#NAME} {#INDEX} Temperature over {$TEMP_CRIT} {HOSTNAME} - Critical temperature
+
 {#NAME} {#INDEX} Temperature over {$TEMP_WARN} {HOSTNAME} - Warn tempreture
 
